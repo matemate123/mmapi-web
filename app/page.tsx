@@ -6,7 +6,7 @@ export default function Home() {
 
   const handleLogin = () => {
     // Redirigimos a la ruta de login de tu API de FastAPI
-    window.location.href = "https://consequently-northwest-focus-flower.trycloudflare.com/auth/login";
+    window.location.href = "https://aimed-finds-cgi-rides.trycloudflare.com/auth/login";
   };
 
   return (
