@@ -30,52 +30,27 @@ function DashboardContent() {
         fetchGuilds(savedToken);
       } else {
         // No token found, redirect to login
-        window.location.href = 'TU_URL_DEL_TUNEL/auth/login';
+        window.location.href = 'https://corporations-hampton-export-corporate.trycloudflare.com/auth/login';
       }
     }
   }, [searchParams]);
 
-  const fetchGuilds = async (token: string) => {
+const fetchGuilds = async (token: string) => {
     try {
-      const response = await fetch(`TU_URL_DEL_TUNEL/auth/guilds?token=${token}`);
+      // 1. Aquí pedimos los datos a la API (fíjate que ahora dice /user/guilds)
+      const response = await fetch(`https://corporations-hampton-export-corporate.trycloudflare.com/user/guilds?token=${token}`);
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch guilds');
-      }
-      
+      if (!response.ok) throw new Error('Error al conectar con la API');
+
       const data = await response.json();
-      setServers(data);
       
-      // Optionally fetch user info
-      if (data.length > 0) {
-        setUserName(data[0].owner || 'Administrator');
-      }
+      // 2. Aquí está la "magia": data es el paquete, y .guilds es lo que hay dentro.
+      // Tu api.py devuelve: {"total_admin_guilds": X, "guilds": [...]}
+      setServers(data.guilds); 
+      
     } catch (error) {
       console.error('Error fetching guilds:', error);
-      // Mock data for demo
-      setServers([
-        {
-          id: '1',
-          name: 'Survival Server',
-          icon: 'https://cdn.discordapp.com/icons/1234567890/a_abc123.png',
-          memberCount: 1250,
-          status: 'online'
-        },
-        {
-          id: '2',
-          name: 'Creative World',
-          icon: null,
-          memberCount: 850,
-          status: 'online'
-        },
-        {
-          id: '3',
-          name: 'Mini Games Hub',
-          icon: 'https://cdn.discordapp.com/icons/1234567892/a_abc125.png',
-          memberCount: 2100,
-          status: 'offline'
-        },
-      ]);
+      setServers([]); // Si falla, dejamos la lista vacía para que no explote
     } finally {
       setLoading(false);
     }
