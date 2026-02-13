@@ -8,7 +8,7 @@ import { Server, Settings, LogOut, Search, Loader2 } from 'lucide-react';
 // Separate component for the dashboard content that uses useSearchParams
 function DashboardContent() {
   const searchParams = useSearchParams();
-  const [servers, setServers] = useState([]);
+  const [servers, setServers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [userName, setUserName] = useState('Administrator');
