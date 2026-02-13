@@ -38,7 +38,7 @@ function DashboardContent() {
 const fetchGuilds = async (token: string) => {
     try {
       const response = await fetch(`https://corporations-hampton-export-corporate.trycloudflare.com/user/guilds?token=${token}`);
-      if (!response.ok) throw new Error('Error al conectar con la API');
+      if (!response.ok) throw new Error('Failed to fetch guilds');
       const data = await response.json();
       setServers(data.guilds || []);
     } catch (error) {
@@ -47,6 +47,12 @@ const fetchGuilds = async (token: string) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ESTO TIENE QUE IR ANTES DEL RETURN
+  const handleLogout = () => {
+    localStorage.removeItem('discord_token');
+    window.location.href = 'https://corporations-hampton-export-corporate.trycloudflare.com/auth/login';
   };
 
   return (
