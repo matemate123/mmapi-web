@@ -226,8 +226,8 @@ const fetchGuilds = async (token: string) => {
                         </h3>
                         <div className="flex items-center gap-4 text-sm">
                           <div className="flex items-center gap-1.5 text-gray-400">
-                            <div className={`w-2 h-2 rounded-full ${server.status === 'online' ? 'bg-[#43b581]' : 'bg-gray-500'} animate-pulse`} />
-                            <span>{server.status === 'online' ? 'Online' : 'Offline'}</span>
+                            <div className="w-2 h-2 rounded-full bg-[#43b581] animate-pulse" />
+                            <span>Ready to Manage</span>
                           </div>
                           {server.memberCount && (
                             <div className="flex items-center gap-1.5 text-gray-400">
