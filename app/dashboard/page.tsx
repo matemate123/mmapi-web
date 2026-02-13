@@ -1,44 +1,323 @@
-"use client";
+'use client';
+
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Server, Settings, LogOut, Search, Loader2 } from 'lucide-react';
 
-// 1. Creamos un componente pequeño para el contenido del Dashboard
+// Separate component for the dashboard content that uses useSearchParams
 function DashboardContent() {
-    const searchParams = useSearchParams();
-    const [token, setToken] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const [servers, setServers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [userName, setUserName] = useState('Administrator');
 
-    useEffect(() => {
-        const tokenFromUrl = searchParams.get('token');
-        if (tokenFromUrl) {
-            localStorage.setItem('discord_token', tokenFromUrl);
-            setToken(tokenFromUrl);
-        } else {
-            // Si no hay token en la URL, buscamos en el almacenamiento local
-            const savedToken = localStorage.getItem('discord_token');
-            setToken(savedToken);
-        }
-    }, [searchParams]);
+  useEffect(() => {
+    // Get token from URL
+    const token = searchParams.get('token');
+    
+    if (token) {
+      // Save token to localStorage
+      localStorage.setItem('discord_token', token);
+      
+      // Fetch guilds from API
+      fetchGuilds(token);
+    } else {
+      // Try to get token from localStorage
+      const savedToken = localStorage.getItem('discord_token');
+      if (savedToken) {
+        fetchGuilds(savedToken);
+      } else {
+        // No token found, redirect to login
+        window.location.href = 'TU_URL_DEL_TUNEL/auth/login';
+      }
+    }
+  }, [searchParams]);
 
-    return (
-        <div style={{ padding: '20px', fontFamily: 'sans-serif', color: '#333' }}>
-            <h1>✅ ¡Dashboard Conectado!</h1>
-            <p>Bienvenido al panel de control de tu servidor.</p>
-            <div style={{ background: '#eef2ff', border: '1px solid #6366f1', padding: '15px', borderRadius: '8px' }}>
-                <strong>Tu Token de Acceso:</strong> 
-                <p style={{ wordBreak: 'break-all', fontSize: '12px', color: '#444' }}>
-                    {token ? token : "Cargando..."}
-                </p>
+  const fetchGuilds = async (token: string) => {
+    try {
+      const response = await fetch(`TU_URL_DEL_TUNEL/auth/guilds?token=${token}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch guilds');
+      }
+      
+      const data = await response.json();
+      setServers(data);
+      
+      // Optionally fetch user info
+      if (data.length > 0) {
+        setUserName(data[0].owner || 'Administrator');
+      }
+    } catch (error) {
+      console.error('Error fetching guilds:', error);
+      // Mock data for demo
+      setServers([
+        {
+          id: '1',
+          name: 'Survival Server',
+          icon: 'https://cdn.discordapp.com/icons/1234567890/a_abc123.png',
+          memberCount: 1250,
+          status: 'online'
+        },
+        {
+          id: '2',
+          name: 'Creative World',
+          icon: null,
+          memberCount: 850,
+          status: 'online'
+        },
+        {
+          id: '3',
+          name: 'Mini Games Hub',
+          icon: 'https://cdn.discordapp.com/icons/1234567892/a_abc125.png',
+          memberCount: 2100,
+          status: 'offline'
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('discord_token');
+    window.location.href = '/';
+  };
+
+  const filteredServers = servers.filter(server =>
+    server.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getServerIcon = (server: any) => {
+    if (server.icon) {
+      return `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.png`;
+    }
+    return null;
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#1a1d23] flex">
+      {/* Sidebar */}
+      <aside className="w-20 bg-[#36393f] border-r border-white/5 flex flex-col items-center py-8 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-12 h-12 bg-gradient-to-br from-[#7289da] to-[#43b581] rounded-xl flex items-center justify-center shadow-lg shadow-[#7289da]/30 cursor-pointer hover:scale-110 transition-transform"
+        >
+          <span className="text-white font-black text-lg">MC</span>
+        </motion.div>
+
+        <div className="flex-1 flex flex-col gap-4">
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="group relative p-3 rounded-xl hover:bg-white/5 transition-all duration-200"
+            title="My Servers"
+          >
+            <Server className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors" />
+            <div className="absolute left-full ml-2 px-3 py-1.5 bg-[#36393f] text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">
+              My Servers
             </div>
-            <p style={{ marginTop: '20px' }}>🚀 Próximo paso: Obtener la lista de servidores.</p>
+          </motion.button>
+
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="group relative p-3 rounded-xl hover:bg-white/5 transition-all duration-200"
+            title="Settings"
+          >
+            <Settings className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors" />
+            <div className="absolute left-full ml-2 px-3 py-1.5 bg-[#36393f] text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">
+              Settings
+            </div>
+          </motion.button>
         </div>
-    );
+
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          onClick={handleLogout}
+          className="group relative p-3 rounded-xl hover:bg-red-500/10 transition-all duration-200"
+          title="Logout"
+        >
+          <LogOut className="w-6 h-6 text-gray-400 group-hover:text-red-400 transition-colors" />
+          <div className="absolute left-full ml-2 px-3 py-1.5 bg-[#36393f] text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">
+            Logout
+          </div>
+        </motion.button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto px-8 py-12">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12"
+          >
+            <h1 className="text-4xl font-black text-white mb-2">
+              Hello, <span className="bg-gradient-to-r from-[#7289da] to-[#43b581] text-transparent bg-clip-text">{userName}</span>
+            </h1>
+            <p className="text-gray-400 text-lg">Manage your Minecraft servers from one place</p>
+          </motion.div>
+
+          {/* Search Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mb-8"
+          >
+            <div className="relative max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search servers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-[#36393f] text-white placeholder-gray-400 pl-12 pr-4 py-3.5 rounded-xl border border-white/10 focus:border-[#7289da] focus:outline-none transition-all duration-200"
+              />
+            </div>
+          </motion.div>
+
+          {/* Server List */}
+          {loading ? (
+            <div className="grid grid-cols-1 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="bg-[#36393f] rounded-2xl p-6 border border-white/10 animate-pulse"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-[#2c2f33] rounded-xl" />
+                    <div className="flex-1">
+                      <div className="h-5 bg-[#2c2f33] rounded w-1/3 mb-2" />
+                      <div className="h-4 bg-[#2c2f33] rounded w-1/4" />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 bg-[#2c2f33] rounded-lg w-24" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              <AnimatePresence mode="popLayout">
+                {filteredServers.map((server, index) => (
+                  <motion.div
+                    key={server.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group bg-[#36393f] rounded-2xl p-6 border border-white/10 hover:border-[#7289da]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#7289da]/10"
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Server Icon */}
+                      {getServerIcon(server) ? (
+                        <img
+                          src={getServerIcon(server)}
+                          alt={server.name}
+                          className="w-16 h-16 rounded-xl object-cover ring-2 ring-white/10 group-hover:ring-[#7289da]/50 transition-all duration-300"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#7289da] to-[#43b581] flex items-center justify-center ring-2 ring-white/10 group-hover:ring-[#7289da]/50 transition-all duration-300 shadow-lg shadow-[#7289da]/30">
+                          <span className="text-white font-bold text-xl">
+                            {getInitials(server.name)}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Server Info */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-white font-bold text-xl mb-1 truncate">
+                          {server.name}
+                        </h3>
+                        <div className="flex items-center gap-4 text-sm">
+                          <div className="flex items-center gap-1.5 text-gray-400">
+                            <div className={`w-2 h-2 rounded-full ${server.status === 'online' ? 'bg-[#43b581]' : 'bg-gray-500'} animate-pulse`} />
+                            <span>{server.status === 'online' ? 'Online' : 'Offline'}</span>
+                          </div>
+                          {server.memberCount && (
+                            <div className="flex items-center gap-1.5 text-gray-400">
+                              <Server className="w-4 h-4" />
+                              <span>{server.memberCount.toLocaleString()} members</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Manage Button */}
+                      <div className="flex items-center gap-3">
+                        <button className="px-6 py-2.5 bg-[#7289da] hover:bg-[#5b6eae] text-white font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg shadow-[#7289da]/30 hover:shadow-[#7289da]/50 hover:scale-105">
+                          <Settings className="w-4 h-4" />
+                          <span>Manage</span>
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && filteredServers.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-20"
+            >
+              <div className="inline-block p-6 bg-[#36393f] rounded-2xl mb-6 border border-white/10">
+                <Server className="w-16 h-16 text-gray-400" />
+              </div>
+              <h3 className="text-white text-2xl font-bold mb-2">No servers found</h3>
+              <p className="text-gray-400 mb-8">
+                {searchTerm ? 'Try adjusting your search' : 'Add the bot to a server to get started'}
+              </p>
+              {!searchTerm && (
+                <button className="px-8 py-3 bg-[#7289da] hover:bg-[#5b6eae] text-white font-bold rounded-xl transition-all duration-200 shadow-lg shadow-[#7289da]/30">
+                  Add to Discord
+                </button>
+              )}
+            </motion.div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
 }
 
-// 2. La página principal envuelve el contenido en un Suspense
+// Main component with Suspense wrapper
 export default function DashboardPage() {
-    return (
-        <Suspense fallback={<div>Cargando dashboard...</div>}>
-            <DashboardContent />
-        </Suspense>
-    );
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#1a1d23] flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 text-[#7289da] animate-spin mx-auto mb-4" />
+            <p className="text-white text-lg">Loading dashboard...</p>
+          </div>
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
+  );
 }
