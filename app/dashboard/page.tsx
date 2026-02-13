@@ -226,8 +226,9 @@ const fetchGuilds = async (token: string) => {
                         </h3>
                         <div className="flex items-center gap-4 text-sm">
                           <div className="flex items-center gap-1.5 text-gray-400">
-                            <div className="w-2 h-2 rounded-full bg-[#43b581] animate-pulse" />
-                            <span>Ready to Manage</span>
+                            <div className={`w-2 h-2 rounded-full ${server.status === 'online' ? 'bg-[#7289da]' : 'bg-[#43b581]'} animate-pulse`} />
+                            <span>{server.status === 'online' ? 'Bot Ready' : 'Needs Setup'}</span>
+                          </div>
                           </div>
                           {server.memberCount && (
                             <div className="flex items-center gap-1.5 text-gray-400">
@@ -240,9 +241,22 @@ const fetchGuilds = async (token: string) => {
 
                       {/* Manage Button */}
                       <div className="flex items-center gap-3">
-                        <button className="px-6 py-2.5 bg-[#7289da] hover:bg-[#5b6eae] text-white font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg shadow-[#7289da]/30 hover:shadow-[#7289da]/50 hover:scale-105">
+                        <button 
+                          onClick={() => {
+                            if (server.status === 'offline') {
+                              alert("¡Hola! Ve a tu servidor de Discord y usa el comando /setup para vincular tu Minecraft.");
+                            } else {
+                              alert(`Aquí se abrirán los ajustes para el servidor: ${server.name}`);
+                            }
+                          }}
+                          className={`px-6 py-2.5 text-white font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg hover:scale-105 ${
+                            server.status === 'online' 
+                            ? 'bg-[#7289da] hover:bg-[#5b6eae] shadow-[#7289da]/30 hover:shadow-[#7289da]/50' // Estilo para Manage
+                            : 'bg-[#43b581] hover:bg-[#3ca374] shadow-[#43b581]/30 hover:shadow-[#43b581]/50' // Estilo para Setup
+                          }`}
+                        >
                           <Settings className="w-4 h-4" />
-                          <span>Manage</span>
+                          <span>{server.status === 'online' ? 'Manage' : 'Setup Bot'}</span>
                         </button>
                       </div>
                     </div>
