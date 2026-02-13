@@ -232,7 +232,7 @@ function DashboardContent() {
                       {/* Server Icon */}
                       {getServerIcon(server) ? (
                         <img
-                          src={getServerIcon(server)}
+                          src={getServerIcon(server) || undefined}
                           alt={server.name}
                           className="w-16 h-16 rounded-xl object-cover ring-2 ring-white/10 group-hover:ring-[#7289da]/50 transition-all duration-300"
                         />
