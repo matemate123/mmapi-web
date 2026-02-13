@@ -37,24 +37,20 @@ function DashboardContent() {
 
 const fetchGuilds = async (token: string) => {
     try {
-      // 1. Aquí pedimos los datos a la API (fíjate que ahora dice /user/guilds)
       const response = await fetch(`https://corporations-hampton-export-corporate.trycloudflare.com/user/guilds?token=${token}`);
-      
       if (!response.ok) throw new Error('Error al conectar con la API');
-
       const data = await response.json();
-      
-      // 2. Aquí está la "magia": data es el paquete, y .guilds es lo que hay dentro.
-      // Tu api.py devuelve: {"total_admin_guilds": X, "guilds": [...]}
-      setServers(data.guilds); 
-      
+      setServers(data.guilds || []);
     } catch (error) {
       console.error('Error fetching guilds:', error);
-      setServers([]); // Si falla, dejamos la lista vacía para que no explote
+      setServers([]);
     } finally {
       setLoading(false);
     }
   };
+
+  return (
+    <div className="min-h-screen bg-[#1a1d23] flex">
 
   const handleLogout = () => {
     localStorage.removeItem('discord_token');
