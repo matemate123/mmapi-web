@@ -6,7 +6,7 @@ import { Activity, Zap, Settings, ArrowRight } from 'lucide-react';
 
 export default function LandingPage() {
   const handleDashboardClick = () => {
-    window.location.href = 'https://aimed-finds-cgi-rides.trycloudflare.com/auth/login';
+    window.location.href = 'https://corporations-hampton-export-corporate.trycloudflare.com/auth/login';
   };
 
   const handleAddToDiscord = () => {
