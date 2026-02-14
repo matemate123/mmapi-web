@@ -133,11 +133,26 @@ export default function LandingPage() {
 
         {/* PRICING SECTION PREVIEW */}
         <section id="pricing" className="max-w-7xl mx-auto px-6 py-32 border-t border-white/5">
-           <div className="text-center mb-16">
-              <h2 className="text-4xl font-black tracking-tighter mb-4 uppercase">Choose your plan</h2>
-              <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Upgrade to Premium to increase visibility</p>
-           </div>
-           {/* Aquí irían las tarjetas de pricing que definimos antes */}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black tracking-tighter mb-4 uppercase">Choose your plan</h2>
+            <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Upgrade to Premium to increase visibility</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <PricingCard 
+              tier="Free" 
+              price="0" 
+              color="#43b581" 
+              tag="Common Artifact"
+              features={[
+                "7 Days Uptime History",
+                "Basic Discord Integration",
+                "Standard Support",
+                "Community Directory"
+                ]}
+              />
+              {/* Deja las otras dos vacías por ahora */}
+            </div>
+          </section>
         </section>
       </main>
 
@@ -177,5 +192,80 @@ function StatBox({ label, value, sub, color }: any) {
       </div>
       <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">{sub}</p>
     </div>
+  );
+}
+// ... (código anterior)
+function PricingCard({ tier, price, color, tag, features, icon, featured }: any) {
+  const imageSrc = tier === 'Free' ? '/images/free.png' : '/images/premium_placeholder.png';
+
+  return (
+    <motion.div 
+      whileHover={{ y: -12, rotateY: 5 }}
+      className="relative group"
+    >
+      <div 
+        className="absolute -inset-2 rounded-[3rem] blur-2xl opacity-10 group-hover:opacity-30 transition duration-500" 
+        style={{ backgroundColor: color }} 
+      />
+      
+      <div className="relative bg-[#2f3136] p-[2px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5">
+        <div className="bg-[#1a1d23] rounded-[2.4rem] p-6 flex flex-col h-full min-h-[550px] relative overflow-hidden">
+          
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+
+          <div className="flex justify-between items-center mb-6 border-b-2 border-white/5 pb-4 z-10">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Tier</span>
+              <span className="font-black text-2xl uppercase italic tracking-tighter text-white">{tier}</span>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Rarity</span>
+              <p className="font-black text-xs uppercase italic" style={{ color: color }}>{tag}</p>
+            </div>
+          </div>
+
+          <div className="relative w-full h-56 bg-[#000]/20 rounded-2xl mb-8 flex items-center justify-center overflow-hidden border border-white/5">
+            <div 
+              className="absolute w-32 h-32 rounded-full blur-[60px] opacity-20 group-hover:opacity-50 transition-all duration-700"
+              style={{ backgroundColor: color }}
+            />
+            
+            <motion.img 
+              src={imageSrc}
+              alt="Tier Artifact"
+              className="w-40 h-40 object-contain z-10"
+              animate={{ 
+                y: [0, -10, 0],
+                filter: [`drop-shadow(0 0 10px ${color}44)`, `drop-shadow(0 0 20px ${color}88)`, `drop-shadow(0 0 10px ${color}44)`]
+              }} 
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+            />
+          </div>
+
+          <div className="z-10 flex-1">
+            <div className="flex items-baseline gap-1 mb-6">
+              <span className="text-4xl font-black text-white">${price}</span>
+              <span className="text-gray-500 text-xs font-bold uppercase tracking-widest">/ Month</span>
+            </div>
+
+            <ul className="space-y-3">
+              {features.map((f: any) => (
+                <li key={f} className="flex items-center gap-3 text-[11px] font-bold text-gray-400 uppercase tracking-tight">
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <button 
+            className="mt-8 w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] text-white transition-all shadow-lg active:scale-95"
+            style={{ backgroundColor: color }}
+          >
+            Select Card
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 }
