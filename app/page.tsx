@@ -195,7 +195,7 @@ function StatBox({ label, value, sub, color }: any) {
   );
 }
 // ... (código anterior)
-function PricingCard({ tier, price, color, tag, features, icon, featured }: any) {
+function PricingCard({ tier, price, color, tag, features }: any) {
   const imageSrc = tier === 'Free' ? '/images/free.png' : '/images/premium_placeholder.png';
 
   return (
@@ -210,7 +210,6 @@ function PricingCard({ tier, price, color, tag, features, icon, featured }: any)
       
       <div className="relative bg-[#2f3136] p-[2px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5">
         <div className="bg-[#1a1d23] rounded-[2.4rem] p-6 flex flex-col h-full min-h-[550px] relative overflow-hidden">
-          
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
 
           <div className="flex justify-between items-center mb-6 border-b-2 border-white/5 pb-4 z-10">
@@ -225,11 +224,7 @@ function PricingCard({ tier, price, color, tag, features, icon, featured }: any)
           </div>
 
           <div className="relative w-full h-56 bg-[#000]/20 rounded-2xl mb-8 flex items-center justify-center overflow-hidden border border-white/5">
-            <div 
-              className="absolute w-32 h-32 rounded-full blur-[60px] opacity-20 group-hover:opacity-50 transition-all duration-700"
-              style={{ backgroundColor: color }}
-            />
-            
+            <div className="absolute w-32 h-32 rounded-full blur-[60px] opacity-20 group-hover:opacity-50 transition-all duration-700" style={{ backgroundColor: color }} />
             <motion.img 
               src={imageSrc}
               alt="Tier Artifact"
@@ -247,7 +242,6 @@ function PricingCard({ tier, price, color, tag, features, icon, featured }: any)
               <span className="text-4xl font-black text-white">${price}</span>
               <span className="text-gray-500 text-xs font-bold uppercase tracking-widest">/ Month</span>
             </div>
-
             <ul className="space-y-3">
               {features.map((f: any) => (
                 <li key={f} className="flex items-center gap-3 text-[11px] font-bold text-gray-400 uppercase tracking-tight">
@@ -258,10 +252,7 @@ function PricingCard({ tier, price, color, tag, features, icon, featured }: any)
             </ul>
           </div>
 
-          <button 
-            className="mt-8 w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] text-white transition-all shadow-lg active:scale-95"
-            style={{ backgroundColor: color }}
-          >
+          <button className="mt-8 w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] text-white transition-all shadow-lg active:scale-95" style={{ backgroundColor: color }}>
             Select Card
           </button>
         </div>
