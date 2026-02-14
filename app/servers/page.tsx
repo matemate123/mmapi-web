@@ -105,13 +105,25 @@ function ServerRow({ server }: any) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.005, backgroundColor: 'rgba(255,255,255,0.02)' }}
-      className="bg-[#2f3136]/30 border border-white/5 rounded-[2rem] p-6 flex flex-col md:flex-row items-center gap-6 group transition-all"
+      className="relative overflow-hidden bg-[#2f3136]/30 border border-white/5 rounded-[2rem] p-6 flex flex-col md:flex-row items-center gap-6 group transition-all"
     >
-      <div className="w-16 h-16 bg-[#1a1d23] rounded-2xl flex items-center justify-center border border-white/10 group-hover:border-[#7289da]/40 transition-colors shrink-0">
+      {/* BANNER ESTÉTICO DE FONDO */}
+      <div className="absolute inset-0 opacity-10 group-hover:opacity-25 transition-opacity pointer-events-none">
+        <img 
+          src="https://wallpaperaccess.com/full/127110.jpg" 
+          alt="background" 
+          className="w-full h-full object-cover"
+        />
+        {/* Degradado para que el texto se lea mejor */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1a1d23] via-transparent to-transparent" />
+      </div>
+
+      {/* Contenido con z-10 para estar sobre el banner */}
+      <div className="relative z-10 w-16 h-16 bg-[#1a1d23] rounded-2xl flex items-center justify-center border border-white/10 group-hover:border-[#7289da]/40 transition-colors shrink-0">
         <Globe className="w-8 h-8 text-gray-700 group-hover:text-[#7289da] transition-colors" />
       </div>
 
-      <div className="flex-1 text-center md:text-left">
+      <div className="relative z-10 flex-1 text-center md:text-left">
         <div className="flex flex-col md:flex-row md:items-center gap-2 mb-1">
           <h3 className="text-xl font-black tracking-tighter uppercase italic">{server.name}</h3>
           <span className="text-[10px] font-black px-2 py-0.5 rounded bg-[#7289da]/20 text-[#7289da] uppercase w-fit mx-auto md:mx-0">
@@ -121,7 +133,7 @@ function ServerRow({ server }: any) {
         <p className="text-sm font-bold text-[#7289da] tracking-tight">{server.ip}</p>
       </div>
 
-      <div className="flex gap-8 px-8 border-x border-white/5 hidden lg:flex">
+      <div className="relative z-10 flex gap-8 px-8 border-x border-white/5 hidden lg:flex">
         <div className="text-center">
           <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1 text-center">Players</p>
           <div className="flex items-center gap-2 justify-center">
@@ -137,9 +149,13 @@ function ServerRow({ server }: any) {
         </div>
       </div>
 
-      <button className="px-6 py-3 bg-[#7289da] hover:bg-[#5b6eae] rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+      {/* Botón View Details convertido en Link */}
+      <Link 
+        href={`/servers/${server.id}`} 
+        className="relative z-10 px-6 py-3 bg-[#7289da] hover:bg-[#5b6eae] rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-center"
+      >
         View Details
-      </button>
+      </Link>
     </motion.div>
   );
 }

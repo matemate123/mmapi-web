@@ -1,5 +1,5 @@
 'use client';
-
+import { supabase } from '@/lib/supabase';
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -305,42 +305,80 @@ function DashboardContent() {
               </motion.div>
             )}
 
-            {activeTab === 'settings' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-[#36393f] rounded-[2.5rem] p-10 border border-white/5 space-y-10">
-                <div>
-                  <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-3">
-                    <Globe className="text-[#7289da]" /> Configuración General
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">IP del Servidor (Free)</label>
-                      <input 
-                        type="text" 
-                        defaultValue={selectedServer.ip}
-                        className="w-full bg-[#1a1d23] border border-white/5 rounded-2xl px-5 py-4 text-white outline-none focus:border-[#7289da] transition-all"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Canal de Discord (Alertas)</label>
-                      <select className="w-full bg-[#1a1d23] border border-white/5 rounded-2xl px-5 py-4 text-white outline-none focus:border-[#7289da] transition-all appearance-none">
-                        <option>#general</option>
-                        <option>#minecraft-status</option>
-                        <option>#staff-only</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+{activeTab === 'settings' && (
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-[#36393f] rounded-[2.5rem] p-10 border border-white/5 space-y-10">
+    <div>
+      <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-3">
+        <Globe className="text-[#7289da]" /> Publicar en la Web Pública
+      </h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Campo IP */}
+        <div className="space-y-3">
+          <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">IP del Servidor</label>
+          <input 
+            id="server-ip"
+            type="text" 
+            placeholder="mc.tuservidor.com"
+            className="w-full bg-[#1a1d23] border border-white/5 rounded-2xl px-5 py-4 text-white outline-none focus:border-[#7289da] transition-all"
+          />
+        </div>
 
-                <div className="pt-6 border-t border-white/5 flex justify-end gap-4">
-                  <button className="px-8 py-4 bg-white/5 text-gray-400 font-black rounded-2xl hover:bg-white/10 transition-all">
-                    DESCARTAR
-                  </button>
-                  <button className="px-10 py-4 bg-[#43b581] text-white font-black rounded-2xl hover:scale-105 transition-all shadow-xl shadow-[#43b581]/20 flex items-center gap-2">
-                    <Save className="w-5 h-5" /> GUARDAR CAMBIOS
-                  </button>
-                </div>
-              </motion.div>
-            )}
+        {/* Campo Categoría */}
+        <div className="space-y-3">
+          <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Categoría</label>
+          <select 
+            id="server-type"
+            className="w-full bg-[#1a1d23] border border-white/5 rounded-2xl px-5 py-4 text-white outline-none focus:border-[#7289da] transition-all"
+          >
+            <option value="Survival">Survival</option>
+            <option value="Skyblock">Skyblock</option>
+            <option value="Minigames">Minigames</option>
+            <option value="Factions">Factions</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="mt-10 pt-10 border-t border-white/5 flex flex-col md:flex-row gap-6 items-center justify-between">
+        <div className="text-sm text-gray-500 font-medium">
+          <p>Al hacer clic en publicar, el servidor aparecerá en la lista de <span className="text-[#7289da]">mc-sm.vercel.app/servers</span></p>
+        </div>
+        
+        <button 
+          onClick={async () => {
+            const ipValue = (document.getElementById('server-ip') as HTMLInputElement).value;
+            const typeValue = (document.getElementById('server-type') as HTMLSelectElement).value;
+
+            if(!ipValue) return alert("Por favor pon una IP");
+
+            const { error } = await supabase
+              .from('servers')
+              .insert([
+                { 
+                  name: selectedServer.name, 
+                  ip: ipValue, 
+                  status: 'online', // Por defecto online al publicar
+                  players_online: 0,
+                  plan: 'premium', // Puedes cambiarlo segun necesites
+                  type: typeValue
+                }
+              ]);
+
+            if (error) {
+              console.error(error);
+              alert("Error al publicar: " + error.message);
+            } else {
+              alert("🚀 ¡Servidor publicado con éxito!");
+            }
+          }}
+          className="px-10 py-5 bg-[#7289da] text-white font-black rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#7289da]/20 flex items-center gap-3 uppercase italic tracking-tighter"
+        >
+          <Save className="w-5 h-5" /> Publicar ahora
+        </button>
+      </div>
+    </div>
+  </motion.div>
+)}
           </div>
 
           {/* COLUMNA DERECHA: ACCIONES RÁPIDAS Y PROMO */}
