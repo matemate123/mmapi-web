@@ -82,14 +82,47 @@ export default function LandingPage() {
             <h2 className="text-4xl font-black uppercase tracking-tighter">Choose your plan</h2>
             <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-2">Upgrade to Premium to increase visibility</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {/* CARTA FREE */}
             <PricingCard 
               tier="Free" 
               price="0" 
               color="#43b581" 
               tag="Common Artifact"
-              features={["7 Days History", "Basic Discord", "Standard Support"]}
-            />
+              features={[
+                "7 Days Uptime History",
+                "Basic Discord Bot",
+                "Standard Support",
+                "Community Directory"
+                ]}
+              />
+            {/* CARTA PREMIUM */}
+            <PricingCard 
+              tier="Premium" 
+              price="9" 
+              color="#7289da" 
+              tag="Epic Artifact"
+              features={[
+                "30 Days Uptime History",
+                "Instant SMS/Discord Alerts",
+                "Custom Server Descriptions",
+                "Featured in Directory"
+                ]}
+              />
+            {/* CARTA PREMIUM+ PLUS */}
+              <PricingCard 
+                tier="Plus" 
+                price="19" 
+                color="#f59e0b" 
+                tag="Legendary Artifact"
+                features={[
+                  "Unlimited History",
+                  "Top 1 Priority Ranking",
+                  "Custom Brand Colors",
+                  "Advanced API Access",
+                  "Dedicated Manager"
+                  ]}
+                />
           </div>
         </section>
       </main>
@@ -121,8 +154,11 @@ function StatBox({ label, value, color }: any) {
 }
 
 function PricingCard({ tier, price, color, tag, features }: any) {
-  const imageSrc = tier === 'Free' ? '/images/free.png' : '/images/premium_placeholder.png';
+  // Esta línea asigna la imagen según el Tier
+  const imageSrc = `/images/${tier.toLowerCase()}.png`; 
+
   return (
+    // ... resto del código que ya tienes
     <motion.div whileHover={{ y: -12 }} className="relative group">
       <div className="absolute -inset-2 rounded-[3rem] blur-2xl opacity-10 group-hover:opacity-30 transition-all" style={{ backgroundColor: color }} />
       <div className="relative bg-[#2f3136] p-[2px] rounded-[2.5rem] overflow-hidden">
