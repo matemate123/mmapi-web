@@ -89,40 +89,42 @@ export default function LandingPage() {
               price="0" 
               color="#43b581" 
               tag="Common Artifact"
+              lore="Get your server on the map and start your journey."
               features={[
-                "7 Days Uptime History",
-                "Basic Discord Bot",
-                "Standard Support",
-                "Community Directory"
+                "Standard Server Listing",
+                "Public Voice Channel",
+                "Basic Status Monitoring",
+                "Community Support"
                 ]}
               />
             {/* CARTA PREMIUM */}
             <PricingCard 
               tier="Premium" 
-              price="9" 
+              price="4.99" 
               color="#7289da" 
               tag="Epic Artifact"
+              lore="Enhanced visibility and deep performance insights."
               features={[
-                "30 Days Uptime History",
-                "Instant SMS/Discord Alerts",
-                "Custom Server Descriptions",
-                "Featured in Directory"
+                "Priority Server Listing",
+                "Real-time TPS/RAM Metrics",
+                "30-Day Uptime History",
+                "Advanced Discord Integration"
                 ]}
               />
             {/* CARTA PREMIUM+ PLUS */}
               <PricingCard 
                 tier="Plus" 
-                price="19" 
+                price="9.99" 
                 color="#f59e0b" 
                 tag="Legendary Artifact"
+                lore="Maximum exposure for the ultimate gaming networks."
                 features={[
-                  "Unlimited History",
-                  "Top 1 Priority Ranking",
-                  "Custom Brand Colors",
-                  "Advanced API Access",
-                  "Dedicated Manager"
-                  ]}
-                />
+                  "Top-Tier Featured Slot",
+                  "Instant Professional Alerts",
+                  "Full Performance History",
+                  "24/7 VIP Admin Support"
+                ]}
+              />
           </div>
         </section>
       </main>
@@ -153,43 +155,76 @@ function StatBox({ label, value, color }: any) {
   );
 }
 
-function PricingCard({ tier, price, color, tag, features }: any) {
-  // Esta línea asigna la imagen según el Tier
-  const imageSrc = `/images/${tier.toLowerCase()}.png`; 
+function PricingCard({ tier, price, color, tag, features, lore }: any) {
+  // Asegúrate de que las imágenes se llamen free.png, premium.png y plus.png
+  const imageSrc = `/images/${tier.toLowerCase().replace('+', '')}.png`;
 
   return (
-    // ... resto del código que ya tienes
-    <motion.div whileHover={{ y: -12 }} className="relative group">
-      <div className="absolute -inset-2 rounded-[3rem] blur-2xl opacity-10 group-hover:opacity-30 transition-all" style={{ backgroundColor: color }} />
-      <div className="relative bg-[#2f3136] p-[2px] rounded-[2.5rem] overflow-hidden">
-        <div className="bg-[#1a1d23] rounded-[2.4rem] p-6 flex flex-col h-full min-h-[550px]">
-          <div className="flex justify-between items-center mb-6 border-b-2 border-white/5 pb-4">
-            <span className="font-black text-2xl uppercase italic text-white">{tier}</span>
-            <p className="font-black text-xs uppercase italic" style={{ color }}>{tag}</p>
+    <motion.div 
+      whileHover={{ y: -12, scale: 1.02 }} 
+      className="relative group transition-all duration-300"
+    >
+      {/* Efecto de resplandor dinámico detrás de la carta */}
+      <div 
+        className="absolute -inset-1 rounded-[2.6rem] blur-xl opacity-10 group-hover:opacity-30 transition-opacity duration-500" 
+        style={{ backgroundColor: color }} 
+      />
+      
+      <div className="relative bg-[#2f3136] p-[1px] rounded-[2.5rem] h-full">
+        <div className="bg-[#1a1d23] rounded-[2.4rem] p-8 flex flex-col h-full min-h-[620px]">
+          
+          {/* Header con nombre y rareza */}
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-black text-2xl uppercase italic text-white tracking-tighter">{tier}</h3>
+            <span 
+              className="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter border" 
+              style={{ borderColor: `${color}44`, color: color, backgroundColor: `${color}11` }}
+            >
+              {tag}
+            </span>
           </div>
-          <div className="relative w-full h-56 bg-black/20 rounded-2xl mb-8 flex items-center justify-center border border-white/5">
+
+          {/* Área visual del Artefacto */}
+          <div className="relative w-full h-44 bg-black/40 rounded-3xl mb-8 flex items-center justify-center border border-white/5 overflow-hidden">
+            <div className="absolute w-20 h-20 rounded-full blur-[40px] opacity-20" style={{ backgroundColor: color }} />
             <motion.img 
               src={imageSrc} 
-              className="w-40 h-40 object-contain z-10" 
+              alt={tier}
+              className="w-28 h-28 object-contain z-10" 
+              onError={(e: any) => { e.target.src = 'https://cdn-icons-png.flaticon.com/512/616/616490.png' }}
               animate={{ y: [0, -10, 0] }} 
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
             />
           </div>
-          <div className="flex-1">
-            <div className="flex items-baseline gap-1 mb-6">
+
+          {/* Precio y Descripción corta */}
+          <div className="mb-8">
+            <div className="flex items-baseline gap-1">
               <span className="text-4xl font-black text-white">${price}</span>
-              <span className="text-gray-500 text-xs font-bold">/ Month</span>
+              <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">/ month</span>
             </div>
-            <ul className="space-y-3">
-              {features.map((f: any) => (
-                <li key={f} className="flex items-center gap-3 text-[11px] font-bold text-gray-400 uppercase">
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} /> {f}
-                </li>
-              ))}
-            </ul>
+            <p className="text-[11px] text-gray-400 italic mt-3 leading-relaxed opacity-70">
+              "{lore}"
+            </p>
           </div>
-          <button className="mt-8 w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white shadow-lg" style={{ backgroundColor: color }}>
-            Select Card
+
+          {/* Lista de beneficios corregida */}
+          <ul className="flex-1 space-y-4 mb-8">
+            {features.map((f: any) => (
+              <li key={f} className="flex items-center gap-3 text-[11px] font-bold text-gray-300 uppercase tracking-tight">
+                <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+
+          {/* Botón de acción */}
+          <button 
+            onClick={() => window.open('https://discord.gg/tu-link', '_blank')}
+            className="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-white shadow-xl transition-all active:scale-95 group-hover:brightness-110"
+            style={{ backgroundColor: color }}
+          >
+            Upgrade Tier
           </button>
         </div>
       </div>
