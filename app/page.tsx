@@ -2,167 +2,180 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, Zap, Settings, ArrowRight, Download, MessageSquare, Shield, FileText } from 'lucide-react';
+import { 
+  Activity, Zap, Settings, ArrowRight, Download, 
+  MessageSquare, Shield, FileText, Server, Globe, 
+  ChevronDown, Search, LayoutGrid
+} from 'lucide-react';
 
 export default function LandingPage() {
   // --- ESTADOS PARA DATOS REALES ---
-  const [serverCount, setServerCount] = useState(12432); // Aquí conectarás tu API luego
-  const [responseTime, setResponseTime] = useState('< 5s');
+  const [serverCount, setServerCount] = useState(12432); // Simulación de dato real de la API
+  const [responseTime, setResponseTime] = useState(4); // en segundos
 
-  // Lógica especial: 11 -> 10+, 23 -> 20+, etc.
+  // LÓGICA ESPECIAL: 11 -> 10, 12432 -> 12000 (12k+)
   const formatActiveServers = (num: number) => {
-    if (num < 10) return num.toString();
-    const rounded = Math.floor(num / 10) * 10;
-    return `${(rounded / 1000).toFixed(0)}k+`; // Para mostrar 10k+
+    if (num < 1000) {
+      const rounded = Math.floor(num / 10) * 10;
+      return `${rounded}+`;
+    }
+    // Para miles: 12432 -> 12k+
+    const thousands = Math.floor(num / 1000);
+    return `${thousands}k+`;
   };
 
   const handleDashboardClick = () => {
     window.location.href = 'https://corporations-hampton-export-corporate.trycloudflare.com/auth/login';
   };
 
-  const handleAddToDiscord = () => {
-    window.open('https://discord.com/api/oauth2/authorize?client_id=1471524993279070415&permissions=8&scope=bot', '_blank');
-  };
-
-  const handleSupport = () => {
-    window.open('https://discord.gg/tu-invitacion', '_blank');
-  };
+  const handleSupport = () => window.open('https://discord.gg/tu-servidor', '_blank');
 
   return (
-    <div className="min-h-screen bg-[#1a1d23] relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#7289da] rounded-full blur-[120px] opacity-20 animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#43b581] rounded-full blur-[120px] opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
+    <div className="min-h-screen bg-[#1a1d23] text-white selection:bg-[#7289da]/30">
+      {/* Luces de fondo (Glow effect) */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[10%] -right-[10%] w-[500px] h-[500px] bg-[#7289da]/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] -left-[10%] w-[400px] h-[400px] bg-[#43b581]/5 rounded-full blur-[100px]" />
       </div>
 
-      <div className="relative z-10">
-        {/* Navbar */}
-        <nav className="border-b border-white/5 backdrop-blur-xl bg-[#36393f]/80 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#7289da] to-[#43b581] rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-black text-lg">MC</span>
-                </div>
-                <span className="text-white font-bold text-xl tracking-tight">MC Monitor</span>
-              </motion.div>
-
-              <div className="hidden md:flex items-center gap-8">
-                <a href="#" className="text-gray-300 hover:text-white transition-colors font-medium">Home</a>
-                <a href="#features" className="text-gray-300 hover:text-white transition-colors font-medium">Features</a>
-                <button onClick={handleSupport} className="text-gray-300 hover:text-white transition-colors font-medium">Support</button>
-              </div>
-
-              <div className="flex items-center gap-3">
-                {/* BOTÓN DESCARGAR (Nuevo) */}
-                <button 
-                  onClick={() => alert("Desktop App coming soon! Stay tuned in our Discord.")}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white border border-white/10 rounded-lg hover:bg-white/5 transition-all text-sm font-bold"
-                >
-                  <Download className="w-4 h-4" /> Download
-                </button>
-                
-                <button onClick={handleDashboardClick} className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#7289da] to-[#43b581] rounded-lg blur opacity-60 group-hover:opacity-100 transition duration-300" />
-                  <div className="relative px-5 py-2 bg-[#36393f] rounded-lg text-white font-bold text-sm">
-                    Login
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        {/* Hero Section */}
-        <section className="max-w-7xl mx-auto px-4 py-20 md:py-32 text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-5xl md:text-7xl font-black text-white mb-6">
-            The Ultimate <br />
-            <span className="bg-gradient-to-r from-[#7289da] via-[#43b581] to-[#7289da] text-transparent bg-clip-text animate-gradient">Minecraft Monitor</span>
-          </motion.h1>
-          
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 font-light">
-            Track your status 24/7. Get instant notifications and monitor performance—all from Discord.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-            <button onClick={handleAddToDiscord} className="group px-8 py-4 bg-[#7289da] text-white font-bold rounded-xl hover:scale-105 transition-all flex items-center gap-2 shadow-xl shadow-[#7289da]/20">
-              Add to Discord <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button onClick={handleDashboardClick} className="px-8 py-4 bg-white/5 text-white font-bold rounded-xl border border-white/10 hover:bg-white/10 transition-all">
-              Go to Dashboard
-            </button>
-          </div>
-
-          {/* Stats Preview DINÁMICOS */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            <div className="bg-[#36393f]/50 p-8 rounded-3xl border border-white/10">
-              <div className="text-4xl font-black text-[#43b581] mb-1">24/7</div>
-              <div className="text-gray-500 text-xs font-black uppercase tracking-widest">Uptime Monitoring</div>
-            </div>
-            <div className="bg-[#36393f]/50 p-8 rounded-3xl border border-white/10">
-              <div className="text-4xl font-black text-blue-400 mb-1">{responseTime}</div>
-              <div className="text-gray-500 text-xs font-black uppercase tracking-widest">Response Time</div>
-            </div>
-            <div className="bg-[#36393f]/50 p-8 rounded-3xl border border-white/10">
-              <div className="text-4xl font-black text-[#7289da] mb-1">{formatActiveServers(serverCount)}</div>
-              <div className="text-gray-500 text-xs font-black uppercase tracking-widest">Active Servers</div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features ID para el scroll */}
-        <section id="features" className="max-w-7xl mx-auto px-4 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard icon={<Activity />} title="Live Status" desc="Real-time monitoring without impacting your server performance." />
-            <FeatureCard icon={<Zap />} title="Easy Setup" desc="One command, zero config. Ready for your community in seconds." />
-            <FeatureCard icon={<Settings />} title="Advanced Tools" desc="From console access to detailed player analytics." />
-          </div>
-        </section>
-
-        {/* Footer FUNCIONAL */}
-        <footer className="border-t border-white/5 py-12 bg-[#1a1d23]">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+      {/* NAVBAR (Basado en tu Prompt SaaS) */}
+      <nav className="border-b border-white/5 backdrop-blur-md bg-[#1a1d23]/80 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-10">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#7289da] to-[#43b581] rounded-lg flex items-center justify-center">
-                <span className="text-white font-black text-sm">MC</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-[#7289da] to-[#43b581] rounded-xl flex items-center justify-center shadow-lg shadow-[#7289da]/20">
+                <span className="font-black text-white italic">MCM</span>
               </div>
-              <span className="text-gray-500 text-sm font-bold">© 2026 MC Monitor. All rights reserved.</span>
+              <span className="font-black text-xl tracking-tighter">MC MONITOR</span>
             </div>
-            
-            <div className="flex flex-wrap justify-center gap-8">
-              <FooterLink onClick={() => alert("Privacy: We only store basic Guild IDs for monitoring.")} icon={<Shield />} label="Privacy" />
-              <FooterLink onClick={() => alert("Terms: Respect Mojang EULA and don't abuse the API.")} icon={<FileText />} label="Terms" />
-              <FooterLink onClick={handleSupport} icon={<MessageSquare />} label="Support" />
+
+            <div className="hidden lg:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-gray-400">
+              <a href="#" className="hover:text-white transition-colors">Home</a>
+              <a href="#" className="hover:text-white transition-colors">Commands</a>
+              <a href="/servers" className="text-[#7289da] flex items-center gap-2">
+                <LayoutGrid className="w-4 h-4" /> Servers
+              </a>
+              <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
             </div>
           </div>
-        </footer>
-      </div>
 
-      <style jsx global>{`
-        @keyframes gradient { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        .animate-gradient { background-size: 200% 200%; animation: gradient 4s ease infinite; }
-      `}</style>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => alert("Próximamente para Windows y Linux")}
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-black uppercase tracking-widest border border-white/5 transition-all"
+            >
+              <Download className="w-4 h-4" /> Download
+            </button>
+            <button 
+              onClick={handleDashboardClick}
+              className="px-6 py-2.5 bg-[#7289da] hover:bg-[#5b6eae] rounded-lg text-sm font-black uppercase tracking-widest transition-all shadow-lg shadow-[#7289da]/20 flex items-center gap-2"
+            >
+              <MessageSquare className="w-4 h-4" /> Login with Discord
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* HERO SECTION */}
+      <main className="relative z-10">
+        <section className="max-w-7xl mx-auto px-6 pt-32 pb-20 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-none">
+              DISCOVER VERIFIED <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7289da] to-[#43b581]">MINECRAFT SERVERS</span>
+            </h1>
+            <p className="text-gray-400 text-xl max-w-2xl mx-auto mb-12 font-medium">
+              All servers are monitored in real-time via our Discord bot. 
+              Get precise analytics and 24/7 uptime tracking.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="relative w-full max-w-md group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-[#7289da] transition-colors" />
+                <input 
+                  type="text" 
+                  placeholder="Search by server name..." 
+                  className="w-full bg-[#36393f]/50 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#7289da]/50 transition-all text-white font-medium"
+                />
+              </div>
+              <button className="px-8 py-4 bg-white text-black font-black rounded-2xl hover:bg-gray-200 transition-all flex items-center gap-2 uppercase tracking-widest text-sm">
+                Search Servers
+              </button>
+            </div>
+          </motion.div>
+
+          {/* STATS SECTION (Aquí está tu 12k+ funcional) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-32 max-w-5xl mx-auto">
+            <StatBox 
+              label="Uptime Monitoring" 
+              value="24/7" 
+              sub="Guaranteed" 
+              color="text-[#43b581]"
+            />
+            <StatBox 
+              label="Response Time" 
+              value={`< ${responseTime}s`} 
+              sub="Real-time update" 
+              color="text-blue-400"
+            />
+            <StatBox 
+              label="Active Servers" 
+              value={formatActiveServers(serverCount)} 
+              sub="Verified by Bot" 
+              color="text-[#7289da]"
+            />
+          </div>
+        </section>
+
+        {/* PRICING SECTION PREVIEW */}
+        <section id="pricing" className="max-w-7xl mx-auto px-6 py-32 border-t border-white/5">
+           <div className="text-center mb-16">
+              <h2 className="text-4xl font-black tracking-tighter mb-4 uppercase">Choose your plan</h2>
+              <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Upgrade to Premium to increase visibility</p>
+           </div>
+           {/* Aquí irían las tarjetas de pricing que definimos antes */}
+        </section>
+      </main>
+
+      {/* FOOTER */}
+      <footer className="border-t border-white/5 bg-[#1a1d23] py-20 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#36393f] rounded-lg flex items-center justify-center border border-white/10">
+                <span className="text-[#7289da] font-black text-xs">MC</span>
+              </div>
+              <span className="font-black text-sm tracking-widest">MC MONITOR</span>
+            </div>
+            <p className="text-gray-600 text-xs font-bold uppercase tracking-tighter text-center md:text-left">
+              The professional standard for <br /> server monitoring and growth.
+            </p>
+          </div>
+
+          <div className="flex gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+            <button onClick={() => alert("Privacy Policy")} className="hover:text-white transition-colors flex items-center gap-2"><Shield className="w-3 h-3"/> Privacy</button>
+            <button onClick={() => alert("Terms of Service")} className="hover:text-white transition-colors flex items-center gap-2"><FileText className="w-3 h-3"/> Terms</button>
+            <button onClick={handleSupport} className="hover:text-[#7289da] transition-colors flex items-center gap-2"><MessageSquare className="w-3 h-3"/> Support</button>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
 
-function FeatureCard({ icon, title, desc }: any) {
+// Componente pequeño para las Stats
+function StatBox({ label, value, sub, color }: any) {
   return (
-    <div className="bg-[#36393f] p-8 rounded-2xl border border-white/10 hover:border-[#7289da]/40 transition-all group">
-      <div className="w-12 h-12 bg-[#1a1d23] rounded-xl flex items-center justify-center mb-6 text-[#7289da] group-hover:scale-110 transition-transform">
-        {icon}
+    <div className="bg-[#36393f]/30 p-10 rounded-[2.5rem] border border-white/5 hover:bg-[#36393f]/50 transition-all group">
+      <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4">{label}</p>
+      <div className={`text-5xl font-black mb-2 tracking-tighter ${color} group-hover:scale-110 transition-transform duration-500`}>
+        {value}
       </div>
-      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-      <p className="text-gray-400 text-sm leading-relaxed">{desc}</p>
+      <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">{sub}</p>
     </div>
-  );
-}
-
-function FooterLink({ icon, label, onClick }: any) {
-  return (
-    <button onClick={onClick} className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-xs font-black uppercase tracking-widest">
-      <span className="opacity-50">{icon}</span> {label}
-    </button>
   );
 }
